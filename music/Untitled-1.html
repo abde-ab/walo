@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Un Site Simple</title>
+</head>
+
+<body background="https://wallpapers.net/web/wallpapers/spot-light-background-hd-wallpaper/thumbnail/lg.jpg">
+  <br><br><br>
+  <h3>
+    SHOOTING ROOM
+    &nbsp;&nbsp;&nbsp;
+    <a href="https://www.instagram.com/ma_tenue0/" target="_blank">Instagram</a> |
+    <a href="https://web.facebook.com/profile.php?id=100076061175699" target="_blank">Facebook</a> |
+    <a href="https://twitter.com/home" target="_blank">Twitter</a> |
+    <a href="https://twitter.com/home" target="_blank">YouTube</a>
+  </h3>
+  <br><br><br>
+
+  <h2>Signup Form</h2>
+  <p>We need the following information from you:</p>
+  <ol>
+    <li>Full Name</li>
+    <li>Street</li>
+    <li>Phone Number</li>
+    <li>Email</li>
+    <li>Birthdate</li>
+    <li>Time To Visit</li>
+    <li>CV</li>
+  </ol>
+  <p>Feel free to fill them in the following fields:</p>
+
+  <!-- Form starts here -->
+  <form id="signup-form">
+    <table>
+      <tr>
+        <th><label for="full-name">Full Name</label></th>
+        <td><input type="text" id="full-name" required></td>
+      </tr>
+      <tr>
+        <th><label for="street">Street</label></th>
+        <td><input type="text" id="street" required></td>
+      </tr>
+      <tr>
+        <th><label for="phone-number">Phone Number</label></th>
+        <td><input type="number" id="phone-number" required></td>
+      </tr>
+      <tr>
+        <th><label for="email">Email</label></th>
+        <td><input type="email" id="email" required></td>
+      </tr>
+      <tr>
+        <th><label for="birthdate">Birthdate</label></th>
+        <td><input type="date" id="birthdate" required></td>
+      </tr>
+      <tr>
+        <th><label for="time-to-visit">Time to visit</label></th>
+        <td><input type="time" id="time-to-visit" required></td>
+      </tr>
+      <tr>
+        <th><label for="cv">CV</label></th>
+        <td><input type="file" id="cv" required></td>
+      </tr>
+    </table>
+    <button type="submit">Send Request</button>
+  </form>
+
+  <script>
+    // Get the form element
+    const form = document.getElementById('signup-form');
+
+    // Add an event listener for form submission
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent the form from submitting the default way
+
+      // Get all the input values
+      const fullName = document.getElementById('full-name').value;
+      const street = document.getElementById('street').value;
+      const phoneNumber = document.getElementById('phone-number').value;
+      const email = document.getElementById('email').value;
+      const birthdate = document.getElementById('birthdate').value;
+      const timeToVisit = document.getElementById('time-to-visit').value;
+      const cv = document.getElementById('cv').files[0] ? document.getElementById('cv').files[0].name : 'No file chosen';
+
+      // Log the values to the console
+      console.log("Full Name:", fullName);
+      console.log("Street:", street);
+      console.log("Phone Number:", phoneNumber);
+      console.log("Email:", email);
+      console.log("Birthdate:", birthdate);
+      console.log("Time to Visit:", timeToVisit);
+      console.log("CV File:", cv);
+    });
+  </script>
+</body>
+
+</html>
