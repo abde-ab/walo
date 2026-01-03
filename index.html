@@ -274,15 +274,15 @@
                 </div>
             </div>
             <div class="contact-form-wrapper reveal">
-                <form class="contact-form">
+                <form id="contact-form" class="contact-form">
                     <div class="form-group">
-                        <input type="text" placeholder="Your Name" required>
+                        <input type="text" id="contact-name" placeholder="Your Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Email Address" required>
+                        <input type="email" id="contact-email" placeholder="Email Address" required>
                     </div>
                     <div class="form-group">
-                        <select>
+                        <select id="contact-vehicle">
                             <option value="">Interested Vehicle</option>
                             <option value="suv">Range Rover Autobiography</option>
                             <option value="sedan">Mercedes S-Class</option>
@@ -291,7 +291,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <textarea rows="4" placeholder="Message / Special Requests"></textarea>
+                        <textarea id="contact-message" rows="4" placeholder="Message / Special Requests"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Send Request</button>
                 </form>

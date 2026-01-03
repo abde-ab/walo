@@ -1,3 +1,31 @@
+// Email API Utility Function
+async function sendEmail(fromEmail, toEmail, subject, message) {
+    try {
+        const response = await fetch('https://email-snowy-ten.vercel.app/Email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                from: fromEmail,
+                to: toEmail,
+                subject: subject,
+                message: message
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return { success: true, data: data };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Get vehicle ID from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -211,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Final Confirmation
     const finalForm = document.getElementById('final-booking-form');
-    finalForm.addEventListener('submit', (e) => {
+    finalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const bookingData = {
@@ -232,9 +260,61 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        console.log('Booking Confirmed:', bookingData);
-        alert(`Booking Confirmed for ${vehicle.name}! \nTotal Price: ${bookingData.totalPrice} €\nWe will contact you shortly.`);
-        closeModal();
+        const submitButton = finalForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Processing...';
+        submitButton.disabled = true;
+
+        // Prepare email content
+        const addonsList = [];
+        if (bookingData.addons.driver) addonsList.push('Professional Driver');
+        if (bookingData.addons.babyseat) addonsList.push('Baby Seat');
+        const addonsText = addonsList.length > 0 ? addonsList.join(', ') : 'None';
+
+        const emailSubject = `New Car Rental Booking from ${bookingData.customer.name}`;
+        const emailBody = `New Car Rental Booking Request
+
+Customer Details:
+- Name: ${bookingData.customer.name}
+- Email: ${bookingData.customer.email}
+- Phone: ${bookingData.customer.phone}
+${bookingData.customer.flight ? `- Flight Number: ${bookingData.customer.flight}` : ''}
+
+Booking Details:
+- Vehicle: ${bookingData.vehicle}
+- Pick-up Date/Time: ${bookingData.pickup}
+- Drop-off Date/Time: ${bookingData.dropoff}
+- Pick-up Location: ${bookingData.location}
+- Total Price: ${bookingData.totalPrice} €
+- Add-ons: ${addonsText}
+
+Please confirm this booking. Thank you!`;
+
+        // Send email
+        const emailResult = await sendEmail(
+            bookingData.customer.email,
+            'cadigormobility@gmail.com',
+            emailSubject,
+            emailBody
+        );
+
+        if (emailResult.success) {
+            alert(`Booking Confirmed for ${vehicle.name}!\nTotal Price: ${bookingData.totalPrice} €\nWe have received your booking request and will contact you shortly.`);
+            closeModal();
+            // Reset form
+            finalForm.reset();
+            pickupInput.value = '';
+            dropoffInput.value = '';
+            totalDisplay.textContent = '0';
+            summaryTotalDisplay.textContent = '0';
+            daysDisplay.textContent = '0';
+        } else {
+            alert(`Booking request submitted for ${vehicle.name}!\nTotal Price: ${bookingData.totalPrice} €\nWe will contact you shortly. If you don't hear from us, please contact us directly.`);
+            closeModal();
+        }
+
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
     });
 
     // Navbar Scroll Effect (same as script.js and fleet.js)
@@ -292,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderVehicleReviews();
 
     // Mobile Toggle (Basic)
-
+    const mobileToggle = document.querySelector('.mobile-toggle');
     if (mobileToggle) {
         mobileToggle.addEventListener('click', () => {
             console.log('Mobile menu clicked');

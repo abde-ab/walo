@@ -1,3 +1,31 @@
+// Email API Utility Function
+async function sendEmail(name, email, comments) {
+    try {
+        const response = await fetch('https://email-snowy-ten.vercel.app/Email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                comments: comments
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`HTTP error! status: ${response.status}`, errorData);
+        }
+
+        const data = await response.json();
+        return { success: true, data: data };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Mobile Navigation Toggle
     const mobileToggle = document.querySelector('.mobile-toggle');
@@ -167,4 +195,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Contact Form Submission ---
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const vehicle = document.getElementById('contact-vehicle').value;
+            const message = document.getElementById('contact-message').value;
+
+            const vehicleText = vehicle ? `Interested Vehicle: ${document.getElementById('contact-vehicle').options[document.getElementById('contact-vehicle').selectedIndex].text}\n\n` : '';
+            const emailBody = `New Contact Request from ${name}\n\n${vehicleText}Message:\n${message}\n\nContact Email: ${email}`;
+
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+
+            const result = await sendEmail(
+                email,
+                'cadigormobility@gmail.com',
+                `New Contact Request from ${name}`,
+                emailBody
+            );
+
+            if (result.success) {
+                alert('Thank you! Your message has been sent successfully. We will get back to you soon.');
+                contactForm.reset();
+            } else {
+                alert('Sorry, there was an error sending your message. Please try again or contact us directly at cadigormobility@gmail.com');
+            }
+
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        });
+    }
 });
